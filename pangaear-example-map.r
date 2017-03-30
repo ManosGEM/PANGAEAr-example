@@ -1,5 +1,10 @@
-install.packages("pangaear")
-
+#Install the following packages if you haven't already.
+#install.packages("pangaear")
+#install.packages("tibble")
+#install.packages("ggplot2")
+#install.packages("mgcv")
+#install.packages("maps")
+#install.packages("maptools")
 library("pangaear")
 library("tibble")
 library("ggplot2")
@@ -49,10 +54,10 @@ foram
 
 #next let's see what the dataset looks like
 #assign names on axis
-ylabel <- expression(delta^{18} * O ~ "[‰ VPDB]")
+ylabel <- expression(delta^{18} * O ~ "[â€° VPDB]")
 xlabel <- "Age [ka BP]"
 #and plot. Note that we have to reverse the scale due to the type of data.
-#the lower the  ä^18 *Ï the higher the temperature so in the plot , warmer and down , is colder. 
+#the lower the  Ã¤^18 *Ã the higher the temperature so in the plot , warmer and down , is colder. 
 ggplot(foram, aes(y = d18O, x = Age_kaBP)) +
   geom_path() +
   scale_x_reverse(sec.axis = sec_axis( ~ 1950 - (. * 1000), name = "Age [AD]")) +
@@ -63,7 +68,7 @@ ggplot(foram, aes(y = d18O, x = Age_kaBP)) +
 #not using the AD , because of discontinuity at 0AD (0AD doesn't exist)
 foram <- with(foram, add_column(foram, Age = - Age_kaBP))
 
-#after that we can fit a generalized additive model to the ä^18 *O record
+#after that we can fit a generalized additive model to the Ã¤^18 *O record
 m <- gam(d18O ~ s(Age, k = 100, bs = "ad"), data = foram, method = "REML", select = TRUE)
 #bs="ad" is an adaptive smoother, Adaptive smoothers tend to use a lot more computing resources but can provide a better fit
 #note that adaptive smoothers won't work well in short time series 
@@ -88,7 +93,7 @@ pred <- transform(pred,
                   Lower = fit - (2 * se.fit),
                   Age_kaBP = - Age)
 
-#Finally we get to plot the Observed ä18O values with the fitted trend 
+#Finally we get to plot the Observed Ã¤18O values with the fitted trend 
 ggplot(foram, aes(y = d18O, x = Age_kaBP)) +
   geom_point() +
   geom_ribbon(data = pred, mapping = aes(x = Age_kaBP, ymin = Lower, ymax = Upper),
